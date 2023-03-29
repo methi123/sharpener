@@ -1,1 +1,1 @@
-document.title = "metheswar"
+console.log(document.title);
