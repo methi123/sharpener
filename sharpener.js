@@ -9,11 +9,17 @@ loginForm.addEventListener("submit", function(event) {
     username,
     password
   }
+  let display = document.createElement('p');
+ display.className = 'display';
+ display.textContent = username+' '+password;
+
+ let task = document.getElementById('task');
+ task.appendChild(display);
 
   // store user details in local storage
 
   localStorage.setItem("object",JSON.stringify(obj))
 
-  // redirect to dashboard or homepage
-  window.location.href = "/dashboard"; // change URL to appropriate destination
 });
+ 
+
