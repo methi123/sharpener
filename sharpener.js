@@ -5,10 +5,14 @@ loginForm.addEventListener("submit", function(event) {
 
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
+  const obj = {
+    username,
+    password
+  }
 
   // store user details in local storage
-  localStorage.setItem("username", username);
-  localStorage.setItem("password", password);
+
+  localStorage.setItem("object",JSON.stringify(obj))
 
   // redirect to dashboard or homepage
   window.location.href = "/dashboard"; // change URL to appropriate destination
