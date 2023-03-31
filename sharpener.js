@@ -1,74 +1,15 @@
-var form = document.getElementById('addForm');
-var itemList = document.getElementById('items');
-var filter = document.getElementById('filter');
+const loginForm = document.getElementById("login-form");
 
-// Form submit event
-form.addEventListener('submit', addItem);
-// Delete event
-itemList.addEventListener('click', removeItem);
-// Filter event
-filter.addEventListener('keyup', filterItems);
+loginForm.addEventListener("submit", function(event) {
+  event.preventDefault(); // prevent default form submission behavior
 
-// Add item
-function addItem(e){
-  e.preventDefault();
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
 
-  // Get input value
-  var newItem = document.getElementById('item').value;
-  var description = document.getElementById('description').value;
+  // store user details in local storage
+  localStorage.setItem("username", username);
+  localStorage.setItem("password", password);
 
-  // Create new li element
-  var li = document.createElement('li');
-  // Add class
-  li.className = 'list-group-item';
-  // Add text node with input value
-  li.appendChild(document.createTextNode(newItem));
-  li.appendChild(document.createTextNode(" "+description));
-
-  // Create del button element
-  var deleteBtn = document.createElement('button');
-  var edit = document.createElement('button');
-
-  // Add classes to del button
-  deleteBtn.className = 'btn btn-danger btn-sm float-end delete';
-  edit.className = 'btn btn-info btn-sm float-end edit';
-
-  // Append text node
-  deleteBtn.appendChild(document.createTextNode('X'));
-  edit.appendChild(document.createTextNode('edit'));
-
-  // Append button to li
-  li.appendChild(deleteBtn);
-  li.appendChild(edit);
-
-  // Append li to list
-  itemList.appendChild(li);
-}
-
-// Remove item
-function removeItem(e){
-  if(e.target.classList.contains('delete')){
-    if(confirm('Are You Sure?')){
-      var li = e.target.parentElement;
-      itemList.removeChild(li);
-    }
-  }
-}
-
-// Filter Items
-function filterItems(e){
-  // convert text to lowercase
-  var text = e.target.value.toLowerCase();
-  // Get lis
-  var items = itemList.getElementsByTagName('li');
-  // Convert to an array
-  Array.from(items).forEach(function(item){
-    var itemName = item.firstChild.textContent;
-    var description = item.childNodes[1].textContent;
-    if(itemName.toLowerCase().indexOf(text) != -1 || description.toLowerCase().indexOf(text) != -1){
-      item.style.display = 'block';
-    } else {
-      item.style.display = 'none';
-    }
-  });
-}
+  // redirect to dashboard or homepage
+  window.location.href = "/dashboard"; // change URL to appropriate destination
+});
