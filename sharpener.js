@@ -4,15 +4,18 @@ const loginForm = document.getElementById("login-form");
 loginForm.addEventListener("submit", function(event) {
   event.preventDefault(); // prevent default form submission behavior
 
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+  const amount = document.getElementById("amount").value;
+  const description = document.getElementById("description").value;
+  const category = document.getElementById("category").value;
   const obj = {
-    username,
-    password
+    amount,
+    description,
+    category
   }
+
   let display = document.createElement('p');
  display.className = 'display';
- display.textContent = username+' '+password+' ';
+ display.textContent = amount+' '+description+' '+category;
  let delete_btn = document.createElement('button');
  delete_btn.className = 'delete';
  delete_btn.textContent = 'X'; 
@@ -50,10 +53,14 @@ function remove(e){
             var li = e.target.parentElement;
             let user = li.textContent.split(' ')[0];
             let pass = li.textContent.split(' ')[1];
-           let user_input = document.getElementById('username');
+            let categ = li.textContent.split(' ')[2];
+           let user_input = document.getElementById('amount');
            user_input.value=user;
-           let pass_input = document.getElementById('password');
+           let pass_input = document.getElementById('description');
            pass_input.value=pass;
+           let category_input = document.getElementById('category');
+           category_input.value = categ.value;
+
             task.removeChild(li);
             
 
