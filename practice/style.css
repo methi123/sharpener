@@ -1,0 +1,14 @@
+h1{
+    color: black;
+    font-family: 'Open Sans';
+    font-size: 80px;
+    font-weight: bolder;   
+  
+}
+p{
+    font-family: 'Open Sans', sans-serif;
+    font-size: 30px;
+}
+html{
+    background-color: aqua;
+}
