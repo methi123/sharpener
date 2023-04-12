@@ -15,7 +15,7 @@ loginForm.addEventListener("submit", function(event) {
 
   let display = document.createElement('p');
  display.className = 'display';
- display.textContent = amount+' '+description+' '+category;
+ display.textContent = amount+' '+description+' '+category+' ';
  let delete_btn = document.createElement('button');
  delete_btn.className = 'delete';
  delete_btn.textContent = 'X'; 
