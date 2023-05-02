@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Expense Tracker</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <style>
+    .display {
+      margin-bottom: 5px;
+    }
+    .delete {
+      margin-left: 5px;
+    }
+    .edit {
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Expense Tracker</h1>
+    <form id="login-form">
+      <div class="form-group">
+        <label for="amount">Expense amount:</label>
+        <input type="number" id="amount" name="amount" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="category">Choose a category:</label>
+        <select id="category" name="category" class="form-control">
+          <option value="fuel">Fuel</option>
+          <option value="vegetables">Vegetables</option>
+          <option value="clothing">Clothing</option>
+          <option value="food">Food</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <div id="task"></div>
+  </div>
+  <script>
+    const loginForm = document.getElementById("login-form");
+
+    loginForm.addEventListener("submit", function(event) {
+      event.preventDefault(); // prevent default form submission behavior
+
+      const amount = document.getElementById("amount").value;
+      const description = document.getElementById("description").value;
+      const category = document.getElementById("category").value;
+      const obj = {
+        amount,
+        description,
+        category
+      }
+
+      let display = document.createElement('p');
+      display.className = 'display';
+      display.textContent = amount+' '+description+' '+category;
+      let delete_btn = document.createElement('button');
+      delete_btn.className = 'delete btn btn-danger';
+      delete_btn.textContent = 'X'; 
+      let edit_btn = document.createElement('button');
+      edit_btn.className = 'edit btn btn-warning';
+      edit_btn.textContent = 'Edit';
+
+      let task = document.getElementById('task');
+      task.appendChild(display);
+      display.appendChild(delete_btn);
+      display.appendChild(edit_btn);
+
+      // store user details in local storage
+      localStorage.setItem("object",JSON.stringify(obj))
+    });
+
+    let deleteitem = document.getElementById('task');
+    deleteitem.addEventListener('click', remove);
+
+    function remove(e){
+      if(e.target.classList.contains('delete')){
+        if(confirm('Are You Sure?')){
+          var li = e.target.parentElement;
+          task.removeChild(li);
+        }
+      } else if(e.target.classList.contains('edit')){
+        if(confirm('Are You Sure?')){
+          var li = e.target.parentElement;
+          let user = li.textContent.split(' ')[0];
+          let pass = li.textContent.split(' ')[1];
+          let categ = li.textContent.split(' ')[2];
+          let user_input = document.getElementById('amount');
+          user_input.value=user;
+          let pass_input = document.getElementById('description');
+          pass_input.value=pass;
+          let category_input = document.getElementById('category');
+          category_input.value = categ;
+
+          task.removeChild(li);
+        }
+      }
+    };
+ 
