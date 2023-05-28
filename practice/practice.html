@@ -2,89 +2,231 @@
 <html>
 <head>
 	<title>Order Form</title>
+	<style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: fit-content;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 200px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 	<script>
-		// Define the API endpoint
-		const API_URL = "https://crudcrud.com/api/c0c5e46a7a5a42d29886fba6ef946dd9/orders";
+const API_URL = "https://crudcrud.com/api/10a0f9429ffa412397a7d3d62b4d30a5/orders";
 
-		// Function to add a new order
-		function addOrder() {
-			// Get values from form inputs
-			var price = document.getElementById("price").value;
-			var table = document.getElementById("table").value;
-			var food = document.getElementById("food").value;
+async function addOrder() {
+  var price = document.getElementById("price").value;
+  var table = document.getElementById("table").value;
+  var food = document.getElementById("food").value;
 
-			// Create a new order object
-			var order = {
-				food: food,
-				price: price,
-				table: table
-			};
+  var order = {
+    food: food,
+    price: price,
+    table: table
+  };
+  if (price === '' || food === '' || table === '') {
+    return;
+  }
+  
+  try {
+    const response = await axios.post(API_URL, order);
+    var data = response.data;
 
-			// Send a POST request to the API to create a new order
-			fetch(API_URL, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify(order)
-			})
-			.then(response => response.json())
-			.then(data => {
-				// Add the new order to the table
-				var table = document.getElementById("order-table");
-				var row = table.insertRow(-1);
-				var cell1 = row.insertCell(0);
-				var cell2 = row.insertCell(1);
-				var cell3 = row.insertCell(2);
-				cell1.innerHTML = data.food;
-				cell2.innerHTML = data.price;
-				cell3.innerHTML = data.table;
-			})
-			.catch(error => console.error(error));
-		}
+    var table = document.getElementById("order-table");
+    var row = table.insertRow(-1);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+    var cell5 = row.insertCell(4);
+    cell1.innerHTML = data.food;
+    cell2.innerHTML = data.price;
+    cell3.innerHTML = data.table;
+    cell4.innerHTML = '<button onclick="editOrder(this)">edit</button>';
+    cell5.innerHTML = '<button onclick="deleteOrder(this)">ordered</button>';
+    location.reload();
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-		// Function to load all orders from the API
-		function loadOrders() {
-			// Send a GET request to the API to get all orders
-			fetch(API_URL)
-			.then(response => response.json())
-			.then(data => {
-				// Add each order to the table
-				var table = document.getElementById("order-table");
-				data.forEach(order => {
-					var row = table.insertRow(-1);
-					var cell1 = row.insertCell(0);
-					var cell2 = row.insertCell(1);
-					var cell3 = row.insertCell(2);
-					cell1.innerHTML = order.food;
-					cell2.innerHTML = order.price;
-					cell3.innerHTML = order.table;
-				});
-			})
-			.catch(error => console.error(error));
-		}
+async function loadOrders() {
+  try {
+    const response = await axios.get(API_URL);
+    var data = response.data;
 
-		// Load all orders when the page loads
-		window.onload = loadOrders;
+    var table = document.getElementById("order-table");
+    data.forEach(order => {
+      var row = table.insertRow(-1);
+      row.setAttribute("data-id", order._id);
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      var cell4 = row.insertCell(3);
+      var cell5 = row.insertCell(4);
+      cell1.innerHTML = order.food;
+      cell2.innerHTML = order.price;
+      cell3.innerHTML = order.table;
+      cell4.innerHTML = '<button onclick="editOrder(this)">edit</button>';
+      cell5.innerHTML = '<button onclick="deleteOrder(this)">ordered</button>';
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function deleteOrder(button) {
+  try {
+    var row = button.parentNode.parentNode;
+    var id = row.getAttribute("data-id");
+
+    const response = await axios.delete(API_URL + "/" + id);
+
+    if (response.status === 200) {
+      row.remove();
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function editOrder(button) {
+  try {
+    var row = button.parentNode.parentNode;
+    var id = row.getAttribute("data-id");
+
+    var foodCell = row.cells[0];
+    var priceCell = row.cells[1];
+    var tableCell = row.cells[2];
+
+    var foodInput = document.createElement("input");
+    foodInput.type = "text";
+    foodInput.value = foodCell.textContent;
+    var priceInput = document.createElement("input");
+    priceInput.type = "number";
+    priceInput.value = priceCell.textContent;
+    var tableInput = document.createElement("select");
+    tableInput.innerHTML = '<option value="Table 1">Table 1</option><option value="Table 2">Table 2</option><option value="Table 3">Table 3</option>';
+    tableInput.value = tableCell.textContent;
+
+    foodCell.innerHTML = "";
+    foodCell.appendChild(foodInput);
+    priceCell.innerHTML = "";
+    priceCell.appendChild(priceInput);
+    tableCell.innerHTML = "";
+    tableCell.appendChild(tableInput);
+
+    button.innerHTML = "Save";
+    button.onclick = async function () {
+      var updatedFood = foodInput.value;
+      var updatedPrice = priceInput.value;
+      var updatedTable = tableInput.value;
+
+      try {
+        const response = await axios.put(API_URL + "/" + id, {
+          food: updatedFood,
+          price: updatedPrice,
+          table: updatedTable
+        });
+        var data = response.data;
+
+        foodCell.innerHTML = data.food;
+        priceCell.innerHTML = data.price;
+        tableCell.innerHTML = data.table;
+
+        button.innerHTML = "Edit";
+        button.onclick = function () {
+          editOrder(this);
+        };
+
+        location.reload();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+window.onload = loadOrders;
 	</script>
+	
 </head>
 <body>
 	<h1>Order Form</h1>
 	<form>
+		<label for="food">Food Item:</label>
+		<input type="text" id="food" name="food" required><br><br>
 		<label for="price">Price:</label>
-		<input type="number" id="price" name="price" required><br>
+		<input type="number" id="price" name="price" required><br><br>
 
 		<label for="table">Table:</label>
 		<select id="table" name="table">
 			<option value="Table 1">Table 1</option>
 			<option value="Table 2">Table 2</option>
 			<option value="Table 3">Table 3</option>
-		</select><br>
+		</select><br><br>
 
-		<label for="food">Food Item:</label>
-		<input type="text" id="food" name="food" required><br>
-
-		<input type="button" value="Add Order" onclick="addOrder()">
+		<button type="button" onclick="addOrder()">Add Order</button>
 	</form>
 
 	<h2>Orders</h2>
@@ -92,8 +234,11 @@
 		<tr>
 			<th>Food Item</th>
 			<th>Price</th>
-			<th>Table</th>
+				<th>Table</th>
+			<th>Edit</th>
+			<th>Delete</th>
 		</tr>
 	</table>
-</body>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	</body>
 </html>

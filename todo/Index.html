@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: fit-content;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 200px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <script>
+		var orders = [];
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function loadOrders() {
+    var table = document.getElementById("order-table");
+    table.innerHTML = `
+        <tr>
+            <th>Food Item</th>
+            <th>Price</th>
+            <th>Table</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    `;
+
+    orders.forEach(async function(order, index) {
+        var row = table.insertRow(-1);
+        var foodCell = row.insertCell(0);
+        var priceCell = row.insertCell(1);
+        var tableCell = row.insertCell(2);
+        var editCell = row.insertCell(3);
+        var deleteCell = row.insertCell(4);
+
+        foodCell.textContent = order.food;
+        priceCell.textContent = order.price;
+        tableCell.textContent = order.table;
+
+        var editButton = document.createElement("button");
+        editButton.textContent = "Edit";
+        editButton.onclick = function() {
+            editOrder(index);
+        };
+
+        var deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.onclick = function() {
+            deleteOrder(index);
+        };
+
+        editCell.appendChild(editButton);
+        deleteCell.appendChild(deleteButton);
+
+        await sleep(0); // Introduce a small delay to allow UI rendering
+    });
+}
+
+async function addOrder() {
+    var food = document.getElementById("food").value;
+    var price = document.getElementById("price").value;
+    var table = document.getElementById("table").value;
+if(food==''||price==''||table==''){
+	return;
+}
+var order = {
+        food: food,
+        price: price,
+        table: table
+    };
+
+    orders.push(order);
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+    document.getElementById("food").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("table").value = "";
+
+    await loadOrders();
+}
+
+async function deleteOrder(index) {
+    orders.splice(index, 1);
+    localStorage.setItem("orders", JSON.stringify(orders));
+    await loadOrders();
+}
+
+async function editOrder(index) {
+    var table = document.getElementById("order-table");
+    var row = table.rows[index + 1]; // Adjust the row index to account for header row
+
+    var foodCell = row.cells[0];
+    var priceCell = row.cells[1];
+    var tableCell = row.cells[2];
+    var editCell = row.cells[3];
+
+    var foodInput = document.createElement("input");
+    foodInput.type = "text";
+    foodInput.value = foodCell.textContent;
+
+    var priceInput = document.createElement("input");
+    priceInput.type = "number";
+    priceInput.value = priceCell.textContent;
+
+    var tableInput = document.createElement("select");
+    tableInput.innerHTML = '<option value="Table 1">Table 1</option><option value="Table 2">Table 2</option><option value="Table 3">Table 3</option>';
+    tableInput.value = tableCell.textContent;
+
+    foodCell.textContent = "";
+    foodCell.appendChild(foodInput);
+
+    priceCell.textContent = "";
+    priceCell.appendChild(priceInput);
+
+    tableCell.textContent = "";
+    tableCell.appendChild(tableInput);
+
+    editCell.textContent = "";
+
+    var saveButton = document.createElement("button");
+    saveButton.textContent = "Save";
+    saveButton.onclick = async function() {
+        var updatedFood = foodInput.value;
+        var updatedPrice = priceInput.value;
+        var updatedTable = tableInput.value;
+
+        orders[index] = {
+            food: updatedFood,
+            price: updatedPrice,
+            table: updatedTable
+        };
+
+        localStorage.setItem("orders", JSON.stringify(orders));
+        await loadOrders();
+    };
+
+    editCell.appendChild(saveButton);
+}
+
+(async function() {
+    orders = JSON.parse(localStorage.getItem("orders")) || [];
+    await loadOrders();
+})();
+
+	</script>
+</head>
+<body>
+    <h1>Order Form</h1>
+
+    <form class="container">
+        <label for="food">Food Item:</label>
+        <input type="text" id="food" name="food" required><br><br>
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" required><br><br>
+
+        <label for="table">Table:</label>
+        <select id="table" name="table">
+            <option value="Table 1">Table 1</option>
+            <option value="Table 2">Table 2</option>
+            <option value="Table 3">Table 3</option>
+        </select><br><br>
+
+        <button type="button" onclick="addOrder()">Add Order</button>
+    </form>
+
+    <h2>Orders</h2>
+    <table id="order-table">
+        <tr>
+            <th>Food Item</th>
+            <th>Price</th>
+            <th>Table</th>
+        </tr>
+    </table>
+</body>
+</html>

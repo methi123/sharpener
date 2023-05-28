@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calculator</title>
+ <style>
+    .calculator {
+  width: 200px;
+  margin: 50px auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.calculator input {
+  width: auto;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.calculator .buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 5px;
+}
+
+.calculator button {
+  padding: 10px;
+  font-size: 18px;
+}
+
+ </style>
+</head>
+<body>
+  <div class="calculator">
+    <input type="text" id="input">
+    <div class="buttons">
+      <button class="number">7</button>
+      <button class="number">8</button>
+      <button class="number">9</button>
+      <button class="operator">+</button>
+      <button class="number">4</button>
+      <button class="number">5</button>
+      <button class="number">6</button>
+      <button class="operator">-</button>
+      <button class="number">1</button>
+      <button class="number">2</button>
+      <button class="number">3</button>
+      <button class="operator">*</button>
+      <button class="number">0</button>
+      <button class="operator">.</button>
+      <button id="equal">=</button>
+      <button class="operator">/</button>
+      <button id="clear">C</button>
+    </div>
+  </div>
+
+ <script>// Selecting elements
+    const inputField = document.getElementById('input');
+    const numberButtons = document.querySelectorAll('.number');
+    const operatorButtons = document.querySelectorAll('.operator');
+    const equalButton = document.getElementById('equal');
+    const clearButton = document.getElementById('clear');
+    
+    // Event listeners for number buttons
+    numberButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Append the clicked number to the input field
+        inputField.value += button.textContent;
+      });
+    });
+    
+    // Event listener for operator buttons
+    operatorButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Append the clicked operator to the input field
+        inputField.value += button.textContent;
+      });
+    });
+    
+    // Event listener for equal button
+    equalButton.addEventListener('click', () => {
+      // Evaluate the expression in the input field and display the result
+      inputField.value = eval(inputField.value);
+    });
+    
+    // Event listener for clear button
+    clearButton.addEventListener('click', () => {
+      // Clear the input field
+      inputField.value = '';
+    });
+    </script>
+</body>
+</html>
